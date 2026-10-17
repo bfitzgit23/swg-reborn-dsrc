@@ -523,13 +523,21 @@ public class base_player extends script.base_script
         {
             setObjVar(self, "tcTester", 1);
         }
-        if (getForcePower(self) > 0)
+        // Ghosts: no Jedi unlock gate. Every character is Force Sensitive from its
+        // first login - no village quests, no holocron grind, no unlock flags to earn.
+        if (getJediState(self) == JEDI_STATE_NONE)
         {
-            if (getJediState(self) == JEDI_STATE_NONE)
-            {
-                setJediState(self, JEDI_STATE_FORCE_SENSITIVE);
-            }
+            setJediState(self, JEDI_STATE_FORCE_SENSITIVE);
         }
+        if (!hasObjVar(self, "ghosts.fs_unlocked"))
+        {
+            int ghostsUnlockedBranches = fs_quests.unlockAllBranches(self);
+            setObjVar(self, "ghosts.fs_unlocked", ghostsUnlockedBranches);
+        }
+        // Ghosts: one-off login gift - composite armour, a starter weapon, jewellery,
+        // collection items and 100k credits in cash and in the bank.  Per-character
+        // guard is ghosts.loginGift, so it is granted once and never again.
+        ghosts_gift.grantIfDue(self);
         if (hasSkill(self, "jedi_padawan_novice"))
         {
             setSkillTemplate(self, "a");
